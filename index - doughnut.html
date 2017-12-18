@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mortgage Calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
+    <style type="text/css">
+    body {
+      font-family: Helvetica Neue, Arial, sans-serif;
+      text-align: center;
+    }
+
+    .title {
+      max-width: 800px;
+      margin: 50px auto;
+    }
+
+    .left {
+      float:left;
+      max-width: 800px;
+      margin: 50px auto;
+    }
+
+    .right {
+      float:right;
+      max-width: 800px;
+      margin: 50px auto;
+    }
+
+    h1 {
+      font-weight: 200;
+      font-size: 3em;
+      margin: 0 0 0.1em 0;
+    }
+
+    h2 {
+      font-weight: 200;
+      font-size: 0.9em;
+      margin: 0 0 50px;
+      color: #999;
+    }
+
+    a {
+      margin-top: 50px;
+      display: block;
+      color: #3e95cd;
+    }
+
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="title">
+      <h1>Mortgage Calculator</h1>
+      <h2>Find out how much you will pay each month</h2>
+      </div>
+      <div class="left">
+        <canvas id="myChart" width="800" height="450"></canvas>
+      </div>
+      <div class="right">
+        <div class="smpc-div">
+          <form name=mortgagecalc method=POST>
+          <p>Home Price:
+          <input type=text onkeypress="return validNumber(event)" name=homeprice size=15> <span class="smpc-error" id="loanError"></span></p>
+          <p>Down Payment:
+          <input type=text onkeypress="return validNumber(event)" name=downpayment size=15> <span class="smpc-error" id="yearsError"></span></p>
+          <p>Interest Rate:
+          <input type=text onkeypress="return validNumber(event)" name=interestrate size=15> <span class="smpc-error" id="rateError"></span></p>
+          <p>Loan Type:
+          <input type=text onkeypress="return validNumber(event)" name=loantype size=15> <span class="smpc-error" id="rateError"></span></p>
+          <p>Property Tax:
+          <input type=text onkeypress="return validNumber(event)" name=propertytax size=15> <span class="smpc-error" id="rateError"></span></p>
+          <p>Home Insurance:
+          <input type=text onkeypress="return validNumber(event)" name=homeinsurance size=15> <span class="smpc-error" id="rateError"></span></p>
+          <p>HOA Dues:
+          <input type=text onkeypress="return validNumber(event)" name=hoadues size=15> <span class="smpc-error" id="rateError"></span></p>
+          <p>Other Payments:
+          <input type=text onkeypress="return validNumber(event)" name=otherpayments size=15> <span class="smpc-error" id="rateError"></span></p>
+          <input type=button onClick="return myPayment()" value=Calculate>  <input type=button onClick="return myPaymentReset()" value=Reset>
+          </form>
+          <small>Instructions: Enter numbers and decimal points. No commas or other characters.</small>
+          <p class="smpc-monthlypayment" id="monthlyPayment"> </p>
+          <p class="smpc-friendlyreminder" id="friendlyReminder">This is your principal + interest payment, or in other words, what you send to the bank each month. But remember, you will also have to budget for homeowners insurance, real estate taxes, and if you are unable to afford a 20% down payment, Private Mortgage Insurance (PMI). These additional costs could increase your monthly outlay by as much as 50%, sometimes more.</p>
+          </div>
+      </div>
+    </div>
+
+    <script>
+    // Our labels along the x-axis
+    var HOA = document.getElementsByName("hoadues")[0].value;
+    var numbers = [10, 20, 30, HOA, 50];
+    var labels = ['Principal & Interest','Property Taxes','Home Insurance','HOA','Mortgage Ins. + Other',];
+    var colors = ['Orange','Blue','Yellow','Green','Red'];
+    var highlight = ['rgb(244, 226, 66)','lightskyblue','rgb(210, 180, 140)','lightgreen','pink'];
+
+
+    //calculate mortgage
+    //M = P [ i(1 + i)^n ] / [ (1 + i)^n – 1]
+    //m = mortgage, P = Principal, i = interest rate,
+    //i i = your monthly interest rate. Your lender likely lists interest rates as an annual figure, so you’ll need to divide by 12,
+    //for each month of the year. So, if your rate is 5%, then the monthly rate will look like this: 0.05/12 = 0.004167.
+    //n = number of payments (years x months)
+    //n = 30-year fixed rate mortgage, this means: n = 30 years x 12 months per year, or 360 payments
+
+
+    //options
+    var options = {
+        responsive: true,
+        title: {
+            display: true,
+            position: "top",
+            text: "Mortgage Breakdown",
+            fontSize: 18,
+            fontColor: "#111"
+        },
+        legend: {
+            display: true,
+            position: "bottom",
+            labels: {
+                fontColor: "#333",
+                fontSize: 16
+            }
+        }
+    };
+
+    var ctx = document.getElementById("myChart");
+
+    var myChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          data: numbers,
+          backgroundColor: colors,
+          hoverBackgroundColor: highlight
+        }
+      ]
+    },
+    options: options
+
+    });
+
+    </script>
+  </body>
+</html>
